@@ -72,14 +72,7 @@
 						submitHandler();
 					}}
 				>
-					<div class=" flex items-center rounded-md py-2 px-4 w-full">
-						<div class=" self-center mr-5">
-							<img
-								src={selectedUser.profile_image_url}
-								class=" max-w-[55px] object-cover rounded-full"
-								alt="User profile"
-							/>
-						</div>
+				
 
 						<div>
 							<div class=" self-center capitalize font-semibold">{selectedUser.name}</div>
@@ -145,10 +138,10 @@
 							{$i18n.t('Save')}
 						</button>
 					</div>
-				</form>
+			
 			</div>
 		</div>
-	</div>
+	
 </Modal>
 
 <style>

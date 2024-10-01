@@ -79,23 +79,45 @@ class ChatTable:
         self.db = db
         db.create_tables([Chat])
 
-    def insert_new_chat(self, user_id: str, form_data: ChatForm) -> Optional[ChatModel]:
-        id = str(uuid.uuid4())
-        chat = ChatModel(
-            **{
-                "id": id,
-                "user_id": user_id,
-                "title": (
-                    form_data.chat["title"] if "title" in form_data.chat else "New Chat"
-                ),
-                "chat": json.dumps(form_data.chat),
-                "created_at": int(time.time()),
-                "updated_at": int(time.time()),
-            }
-        )
+    # Commented out insertion methods
+    # def insert_new_chat(self, user_id: str, form_data: ChatForm) -> Optional[ChatModel]:
+    #     id = str(uuid.uuid4())
+    #     chat = ChatModel(
+    #         **{
+    #             "id": id,
+    #             "user_id": user_id,
+    #             "title": (
+    #                 form_data.chat["title"] if "title" in form_data.chat else "New Chat"
+    #             ),
+    #             "chat": json.dumps(form_data.chat),
+    #             "created_at": int(time.time()),
+    #             "updated_at": int(time.time()),
+    #         }
+    #     )
 
-        result = Chat.create(**chat.model_dump())
-        return chat if result else None
+    #     result = Chat.create(**chat.model_dump())
+    #     return chat if result else None
+
+    # def insert_shared_chat_by_chat_id(self, chat_id: str) -> Optional[ChatModel]:
+    #     chat = Chat.get(Chat.id == chat_id)
+    #     if chat.share_id:
+    #         return self.get_chat_by_id_and_user_id(chat.share_id, "shared")
+    #     shared_chat = ChatModel(
+    #         **{
+    #             "id": str(uuid.uuid4()),
+    #             "user_id": f"shared-{chat_id}",
+    #             "title": chat.title,
+    #             "chat": chat.chat,
+    #             "created_at": chat.created_at,
+    #             "updated_at": int(time.time()),
+    #         }
+    #     )
+    #     shared_result = Chat.create(**shared_chat.model_dump())
+    #     result = (
+    #         Chat.update(share_id=shared_chat.id).where(Chat.id == chat_id).execute()
+    #     )
+
+    #     return shared_chat if (shared_result and result) else None
 
     def update_chat_by_id(self, id: str, chat: dict) -> Optional[ChatModel]:
         try:
@@ -110,31 +132,6 @@ class ChatTable:
             return ChatModel(**model_to_dict(chat))
         except:
             return None
-
-    def insert_shared_chat_by_chat_id(self, chat_id: str) -> Optional[ChatModel]:
-        # Get the existing chat to share
-        chat = Chat.get(Chat.id == chat_id)
-        # Check if the chat is already shared
-        if chat.share_id:
-            return self.get_chat_by_id_and_user_id(chat.share_id, "shared")
-        # Create a new chat with the same data, but with a new ID
-        shared_chat = ChatModel(
-            **{
-                "id": str(uuid.uuid4()),
-                "user_id": f"shared-{chat_id}",
-                "title": chat.title,
-                "chat": chat.chat,
-                "created_at": chat.created_at,
-                "updated_at": int(time.time()),
-            }
-        )
-        shared_result = Chat.create(**shared_chat.model_dump())
-        # Update the original chat with the share_id
-        result = (
-            Chat.update(share_id=shared_chat.id).where(Chat.id == chat_id).execute()
-        )
-
-        return shared_chat if (shared_result and result) else None
 
     def update_shared_chat_by_chat_id(self, chat_id: str) -> Optional[ChatModel]:
         try:
